@@ -1,0 +1,80 @@
+<! Reference : https://github.com/vikkey321/Display-Thingspeak-GPS-data-on-Google-Map-from-ESP12E-and-Neo-6M-GPS/blob/master/index.html >
+<! Replace your THINSPEAK CHANNEL ID, THINSPEAK READ API KEY and GOOGLE MAPS API KEY >
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SPY-DER BOT</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        width:720px;
+        height:400px;
+        border: 6px solid #f7bf05;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvPB8wdFLZRVXEaayrBLIP9QqDrrfYCFs"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+
+      var map;
+        var x;
+        function loadmaps(){
+            $.getJSON("https://api.thingspeak.com/channels/1772477/fields/1/last.json?api_key=LLUH8UL58UDD0FTN", function(result){
+        	
+            var m = result;
+            x=Number(m.field1);
+                           //alert(x);
+
+        });
+            $.getJSON("https://api.thingspeak.com/channels/1772477/fields/2/last.json?api_key=LLUH8UL58UDD0FTN", function(result){
+        	
+            var m = result;
+            y=Number(m.field2);
+                
+                
+        }).done(function() {
+            
+                initialize();
+    });
+            
+        }
+        window.setInterval(function(){
+        loadmaps();
+            }, 9000);
+      function initialize() {
+          //alert(y);
+        var mapOptions = {
+          zoom: 18,
+          center: {lat: x, lng: y}
+        };
+        map = new google.maps.Map(document.getElementById('map'),
+            mapOptions);
+
+        var marker = new google.maps.Marker({
+          position: {lat: x, lng: y},
+          map: map
+        });
+
+        var infowindow = new google.maps.InfoWindow({
+          content: '<p>Marker Location:' + marker.getPosition() + '</p>'
+        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.open(map, marker);
+        });
+      }
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+  </head>
+  <body style="background-color:powderblue;"">
+    <div><h2><center>GPS Loaction of the SPY-DER BOT</center></h2>
+    <p><center>by Students of EIE, VIII Semester</center></p></div>
+    <center><div id="map"></div></center>
+    </div>
+  </body>
+</html>
